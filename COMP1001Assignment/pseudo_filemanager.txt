@@ -1,0 +1,144 @@
+CLASS: FileManager
+
+PUBLIC CLASS CONSTANTS: BAT := "BATTERY"
+						DIESEL := "DIESEL"
+						BIO := "BIO"
+
+CLASS FIELDS:
+
+CONSTRUCTORS:
+Defualt:
+	IMPORT:
+	EXPORT:
+	ASSERTION: creates object of userInterface
+	ALGORITHM: 
+		CONSTRUCT userInterface USING defualt
+		
+SUBMODULE: inputFile
+	IMPORT: 
+	EXPORT: 
+	ASSERTION: reads ships from file
+	ALGORITHM: 
+		TRY
+			line = READ LINE
+			lineArray = line . split ( " ," )
+			
+			IF lineArray LENGTH IS NOT 7 THEN
+				THROW IllegalArgumentException (...)
+			
+			IF lineArray [0] LENGTH IS NOT 1 THEN
+				THROW IllegalArgumentException (...)
+			
+			type = lineArray [0]. charAt (0)
+			serialNum = validateSerialNum <- lineArray [1]
+			year = validateYear <- lineArray [2] (CONVERT TO INTEGER)
+			cylinders = validateCylinders <- lineArray [3] (CONVERT TO INTEGER)
+			fuel = validateFuel <- lineArray [4]
+			
+			CONSTRUCT engine USING cylinders , fuel (ALTERNATE CONSTRUCTOR)
+			
+			CASE type
+				case S : s:
+					hull = validateHull <- lineArray [5]
+					depth = validateDepth <- lineArray [6]
+			
+			
+					CONSTRUCT subObj USING serialNum , year , hull , depth
+					shipStorage.addShip <- subObj
+			
+				case F : f:
+					wingSpan = validateWingSpan <- lineArray [5]
+					ordnace = validateOrdnace <- lineArray [6]
+					
+					CONSTRUCT fighterObj USING serialNum , year , ordnance , wingSpan
+					shipStorage.addShip <- fighterObj
+					
+				DEFAULT :
+					THROW IllegalArgumentException (...)
+			
+			CATCH ( IllegalArgumentException e )
+			
+SUBMODULE outputToFile
+	IMPORT:  shipStorage (ShipStorage)
+	EXPORT:
+	ASSERTION: outputs ships to a file
+	ALGORITHM:
+		OUTPUT "Input file name: "
+		INPUT filename
+		
+		file <- OPENFILE filename
+		
+		num := shipStorage.getNum <- none
+		shipArray[] := shipStorage.getShipArray <- none
+		
+		FOR i := 0 TO i < num INC BY 1
+			type = shipArray[i].getShipType <- none
+			
+			CASE type
+			S:
+				Submarine sub = new Submarine <- none
+				sub = (convert to Submarine)shipArray[i]
+				PRINT "S, " + shipArray[i].getSerialNum <- none + "," + shipArray[i].getYear <- none + "," + sub.getHull <- none + "," + sub.getMaxDepth <- none
+			
+			F:
+				FighterJet fj = new FighterJet <- none
+				fj = (convert to FighterJet)shipArray[i]
+				PRINT "F, " + shipArray[i].getSerialNum <- none + "," + shipArray[i].getYear <- none + "," + fj.getOrdnance <- none + "," + fj.getWingSpan <- none
+		
+		OUTPUT "Ships in storage output to file..."
+		
+		
+SUBMODULES:
+SUBMODULE: validateSerialNum
+	IMPORT: inSerialNum (String)
+	EXPORT: valid (boolean)
+	ASSERTION: must be between 100.001 and 300.999 inclusive
+	ALGORITHM:
+		valid := FALSE 
+		splitSerialNum := inSerialNum.split <- "//."
+		numX(integer) := Integer.parseInt <- splitSerialNum[0]
+		numY(integer) := Integer.parseInt <- splitSerialNum[1]
+		
+		IF (numX.length EQUALS 3) AND (numY.length EQUALS 3) THEN
+			IF (numX >= 100) AND (numX <= 300) AND (numY >= 001) AND (numY <= 999) THEN
+				valid := TRUE
+			ELSE
+				FAIL
+		ELSE 
+			FAIL
+		END IF
+		
+SUBMODULE: validateYear
+	IMPORT: inYear (integer)
+	EXPORT: valid (boolean)
+	ASSERTION: must be between 1950 and 2022 inclusive
+	ALGORITHM:
+		valid := (inYear >= 1950) AND (inYear <= 2022)
+		
+SUBMODULE: validateHull
+	IMPORT: inHull(String)
+	EXPORT: valid (boolean)
+	ASSERTION: hull must be STEEL or ALLOY or TITANIUM
+	ALGORITHM:
+		valid := (inHull EQUALS STEEL) OR (inHull EQUALS ALLOY) OR (inHull EQUALS TIT)
+		
+SUBMODULE: validateMaxDepth
+	IMPORT: inMaxDepth (real)
+	EXPORT: valid (boolean)
+	ASSERTION: must be between -500.0 and 0.0 inclusive
+	ALGORITHM:
+		valid := (inYear >= -500.0) AND (inYear <= 0)
+		
+SUBMODULE: validateOrdnance
+	IMPORT: inOrdnance(String)
+	EXPORT: valid (boolean)
+	ASSERTION: ordnance must be DUCK or RYNO or LAVA
+	ALGORITHM:
+		valid := (inOrdnance EQUALS DUCK) OR (inOrdnance EQUALS RYNO) OR (inOrdnance EQUALS LAVA)
+		
+SUBMODULE: validateWingSpan
+	IMPORT: inWingSpan (real)
+	EXPORT: valid (boolean)
+	ASSERTION: must be between 2.20 and 25.6 inclusive
+	ALGORITHM:
+		valid := (inWingSpan >= 2.20) AND (inWingSpan <= 25.6)

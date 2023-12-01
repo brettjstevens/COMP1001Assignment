@@ -1,0 +1,262 @@
+CLASS: UserInterface
+
+PUBLIC CLASS CONSTANTS: STEEL = "steel";
+						ALLOY = "alloy";
+						TIT = "titanium";
+						BAT = "battery";
+						DIESEL = "diesel";
+						BIO = "bio";
+						TOL = 0.001;
+
+CLASS FIELDS: shipStorage (ShipStorage)
+
+CONSTRUCTORS:
+Defualt:
+	IMPORT:
+	EXPORT:
+	ASSERTION: creates object of shipStorage
+	ALGORITHM: 
+		CONSTRUCT shipStorage USING defualt
+		
+SUBMODULE: mainMenu
+	IMPORT: 
+	EXPORT: 
+	ASSERTION: main menu to redirect to appropriate modules
+	ALGORITHM: 
+		OUTPUT "What would you like to do:
+					1. add a ship
+					2. check a destination
+					3. find duplicates
+					4. view ships
+					5. input ships from file
+					6. output ships to file
+					7. exit"
+		INPUT selection
+		
+		DO
+			CASE selection
+				1: 
+					addShip <- none
+				2: 
+					shipStorage.destinationCheck <- none
+				3:
+					shipStorage.findDuplicates <- none
+				4:
+					shipStorage.viewShips <- none
+				5:
+					fileManager.inputFile <- none
+				6: 
+					fileManager.outToFile <- none
+				7: 
+					OUTPUT "Thnx for your time... NOW CLOSING..."
+		WHILE selection NOT 7
+		
+SUBMODULE: addShip
+	IMPORT: 
+	EXPORT: 
+	ASSERTION: allows user to select what ship they would like to add
+	ALGORITHM:
+	
+	TRY
+		DO
+			OUTPUT "What type of ship would you like to add:
+						1: Submarine
+						2: Fighter jet
+						3. exit"
+			INPUT ship
+			
+			CASE ship
+					1:
+						inSub <- none
+					2:
+						inFj <- none
+					3:
+						OUTPUT "CLOSING..."
+		WHILE 3 < ship < 1
+	CATCH (Exception e)
+		OUTPUT "Invalid input: " + e + NEWLINE
+		
+SUBMODULE: inSub (Sumarine)
+	IMPORT: 
+	EXPORT: 
+	ASSERTION: allows user to input values for a submarine
+	ALGORITHM: 
+		OUTPUT "Enter submarines serial number: "
+		INPUT checkSerialNum (String)
+		IF (validateSerialNum <- checkSerialNum) THEN
+			serialNum := checkSerialNum
+		ELSE
+			FAIL
+		END IF
+		
+		OUTPUT "Enter commission year: "
+		INPUT checkYear (integer)
+		IF (validateYear <- checkYear) THEN
+			year := checkYear
+		ELSE
+			FAIL
+		END IF
+		
+		engine := inputEngine <- none
+		
+		DO
+			OUTPUT "What material is the hull: 
+						1. steel
+						2. alloy
+						3. titanium
+						4. exit"
+			INPUT hull
+		WHILE (material > 4 OR material < 1)
+		
+		IF (material NOT 4)
+			CASE hull
+				1:
+					hull := "STEEL"
+				2:
+					hull := "ALLOY"
+				3:
+					hull := "TITANIUM"
+		
+			OUTPUT "Enter max depth: "
+			INPUT checkMaxDepth (real)
+			IF (validateMaxDepth <- checkMaxDepth) THEN
+				maxDepth := checkMaxDepth
+			ELSE
+				FAIL
+			END IF
+		ELSE
+			OUTPUT "Exiting to main menu... + NEWLINE
+			
+		ONSTRUCT inSub WITH serialNum, year, engine, ordnance, wingSpan
+		shipStorage.addShip <- inSub
+			
+SUBMODULE: inFj (FighterJet)
+	IMPORT: 
+	EXPORT: 
+	ASSERTION: allows user to input values for a fighter jet
+	ALGORITHM: 
+		OUTPUT "Enter fighter jets serial number: "
+		INPUT checkSerialNum (String)
+		IF (validateSerialNum <- checkSerialNum) THEN
+			serialNum := checkSerialNum
+		ELSE
+			FAIL
+		END IF
+		
+		OUTPUT "Enter commission year: "
+		INPUT checkYear (integer)
+		IF (validateYear <- checkYear) THEN
+			year := checkYear
+		ELSE
+			FAIL
+		END IF
+		
+		engine := inputEngine <- none
+		
+		OUTPUT "Enter fighter jets ordnance:"
+		INPUT checkOrd
+		WHILE (validateOrdnance <- checkOrd )
+			OUTPUT "Ordnance must not be an empty string" + NEWLINE +
+								"Please enter fighter jets ordnance:"
+			INPUT checkOrd
+		END WHILE
+		ordnance := checkOrd
+		
+		
+		OUTPUT "Enter wing span: "
+		INPUT checkWingSpan (real)
+		IF (validateWingSpan <- checkWingSpan) THEN
+			wingSpan := checkWingSpan
+		ELSE
+			FAIL
+		END IF
+		
+		CONSTRUCT inFj WITH serialNum, year, engine, ordnance, wingSpan
+		shipStorage.addShip <- inFj
+		
+SUBMODULE: inputEngine
+	IMPORT: 
+	EXPORT: engine
+	ASSERTION: allows user to select/input engine components
+	ALGORITHM:
+		OUTPUT "Please enter number of cylinders: "
+		INPUT cylinders
+		
+		DO
+			OUTPUT "What fuel does the ship use:\n" +
+						"1. bio fuel\n" +
+						"2. diesel\n" +
+						"3. battery\n" +
+						"4. exit"
+			INPUT fuelChoice
+		WHILE fuelChoice > 4 OR fuelChoice < 1
+		
+		IF (fuelChoice != 4) THEN
+			CASE fuelChoice
+			1:
+				fuel = BIO
+			2:
+				fuel = DIESEL
+			3:
+				fuel = BAT
+			END CASE
+		ELSE 
+			OUTPUT "Exiting to main menu..." + NEWLINE
+		END IF
+		
+		CONSTRUCT engine WITH cylinders, fuel
+
+VALIDATE SUBMODULES:
+SUBMODULE: validateSerialNum
+	IMPORT: inSerialNum (String)
+	EXPORT: valid (boolean)
+	ASSERTION: must be between 100.001 and 300.999 inclusive
+	ALGORITHM:
+		valid := FALSE 
+		splitSerialNum := inSerialNum.split <- "//."
+		numX(integer) := Integer.parseInt <- splitSerialNum[0]
+		numY(integer) := Integer.parseInt <- splitSerialNum[1]
+		
+		IF (numX.length EQUALS 3) AND (numY.length EQUALS 3) THEN
+			IF (numX >= 100) AND (numX <= 300) AND (numY >= 001) AND (numY <= 999) THEN
+				valid := TRUE
+			ELSE
+				FAIL
+		ELSE 
+			FAIL
+		END IF
+		
+SUBMODULE: validateYear
+	IMPORT: inYear (integer)
+	EXPORT: valid (boolean)
+	ASSERTION: must be between 1950 and 2022 inclusive
+	ALGORITHM:
+		valid := (inYear >= 1950) AND (inYear <= 2022)
+		
+SUBMODULE: validateHull
+	IMPORT: inHull(String)
+	EXPORT: valid (boolean)
+	ASSERTION: hull must be STEEL or ALLOY or TITANIUM
+	ALGORITHM:
+		valid := (inHull EQUALS STEEL) OR (inHull EQUALS ALLOY) OR (inHull EQUALS TIT)
+		
+SUBMODULE: validateMaxDepth
+	IMPORT: inMaxDepth (real)
+	EXPORT: valid (boolean)
+	ASSERTION: must be between -500.0 and 0.0 inclusive
+	ALGORITHM:
+		valid := (inYear >= -500.0) AND (inYear <= 0)
+		
+SUBMODULE: validateOrdnance
+	IMPORT: inOrdnance(String)
+	EXPORT: valid (boolean)
+	ASSERTION: ordnance must be DUCK or RYNO or LAVA
+	ALGORITHM:
+		valid := (inOrdnance EQUALS DUCK) OR (inOrdnance EQUALS RYNO) OR (inOrdnance EQUALS LAVA)
+		
+SUBMODULE: validateWingSpan
+	IMPORT: inWingSpan (real)
+	EXPORT: valid (boolean)
+	ASSERTION: must be between 2.20 and 25.6 inclusive
+	ALGORITHM:
+		valid := (inWingSpan >= 2.20) AND (inWingSpan <= 25.6)

@@ -1,0 +1,152 @@
+ABSTRACT CLASS: Ship
+
+PUBLIC CLASS CONSTANTS: BAT := "BATTERY"
+						DIESEL := "DIESEL"
+						BIO := "BIO FUEL"
+						TOL := 0.001
+
+CLASS FIELDS: serialNum (String)
+				year (integer)
+				engine (Engine)
+				
+Default:
+	IMPORT: none
+	EXPORT: address of new Ship object
+	ASSERTION: Ship of serial number 100.001 made in 1998
+				is a valid defualt state
+	ALGORITHM: 
+		serialNum := 100.001
+		year := 1998
+		CONSTRUCT engine USING default
+		
+Alternate #1:
+    IMPORT: inSerialNum (String), inYear (integer), inEngine (Engine)
+    EXPORT: address of new Ship object
+    ASSERTION: Creates the object if the imports are valid and FAILS otherwise
+    ALGORITHM:         
+        setSerialNum <- inSerialNum 
+        setYear <- inYear
+		CONSTRUCT engine USING inEngine.getCylinders <- none, inEngine.getFuel <- none
+Copy:
+	IMPORT: inShip (ShipClass)
+    EXPORT: address of new ShipClass object 
+    ASSERTION: Creates an object with an identical object state as the import.
+    ALGORITHM:  serialNum := inShip.getSerialNum <- none
+                year := inShip.getYear <- none
+				CONSTRUCT engine USING inEngine.getCylinders <- none, inEngine.getFuel <- none
+				
+Clone:
+    IMPORT: 
+    EXPORT: 
+    ASSERTION: Creates an abstract clone method
+    ALGORITHM:
+
+MUTATORS:
+SUBMODULE: setSerialNum
+	IMPORT: inSerialNum
+	EXPORT: none
+	ASSERTION: sets the serial number to inSerialNum
+	ALGORITHM:
+		IF (validateSerialNum <- inSerialNum) THEN
+			serialNum := inSerialNum
+		ELSE
+			FAIL
+		END IF
+		
+SUBMODULE: setYear
+	IMPORT: inYear
+	EXPORT: none
+	ASSERTION: sets the year to inYear
+	ALGORITHM:
+		IF (validateYear <- inYear) THEN
+			year := inYear
+		ELSE
+			FAIL
+		END IF
+		
+SUBMODULE: setCylinders
+	IMPORT: inCylinders
+	EXPORT: 
+	ASSERTION: sets cylinders
+		IF (validateCylinders <- inCylinders) THEN
+			engine.setCylinders <- inCylinders
+	
+SUBMODULE: setFuel
+	IMPORT: inFuel
+	EXPORT: 
+	ASSERTION: sets Fuel
+		IF (validateFuel <- inFuel) THEN
+			engine.setFuel <- inFuel
+			
+ACCESSORS:
+SUBMUDULE: getSerialNum
+	IMPORT: none
+	EXPORT: serialNum
+	
+SUBMUDULE: getYear
+	IMPORT: none
+	EXPORT: year
+	
+SUBMODULE: toString
+	IMPORT: none
+	EXPORT: "The ship "+ serialNum +" was comissioned in "+ year + ". " + engine.toString <- none	
+
+SUBMODULE: getCylinders
+	IMPORT: none
+	EXPORT: engine.getCylinders <- none
+	
+SUBMODULE: getFuel
+	IMPORT: none
+	EXPORT: engine.getFuel <- none
+
+SUBMODULES:
+SUBMODULE: getShipType
+	IMPORT: none
+	EXPORT: 
+	ASSERTION: Creates an abstract getShipType method
+	ALGORITHM:
+	
+SUBMODULE: travelCalc
+	IMPORT: distance (integer)
+	EXPORT: time 
+	ASSERTION: can be called to calculate travel time
+	ALGORITHM:
+		
+SUBMODULE: equals
+	IMPORT: inObj (Object)
+	EXPORT: same (boolean)
+	ASSERTION: Two Ships are interchangeable if they have the same serial number, comission year
+	ALGORITHM:
+		same := FASLE
+		IF(inObj ISA Ship) THEN
+			Ship inShip = (convert to Ship)inObj
+            same =  (serialNum.equals(inShip.getSerialNum <- none)) && (year == inShip.getYear <- none)
+		END IF
+		
+SUBMODULE: validateSerialNum
+	IMPORT: inSerialNum (String)
+	EXPORT: valid (boolean)
+	ASSERTION: must be between 100.001 and 300.999 inclusive
+	ALGORITHM:
+		valid := FALSE 
+		splitSerialNum := inSerialNum.split <- "//."
+		numX(integer) := Integer.parseInt <- splitSerialNum[0]
+		numY(integer) := Integer.parseInt <- splitSerialNum[1]
+		
+		IF (numX.length EQUALS 3) AND (numY.length EQUALS 3) THEN
+			IF (numX >= 100) AND (numX <= 300) AND (numY >= 001) AND (numY <= 999) THEN
+				valid := TRUE
+			ELSE
+				FAIL
+		ELSE 
+			FAIL
+		END IF
+		
+SUBMODULE: validateYear
+	IMPORT: inYear (integer)
+	EXPORT: valid (boolean)
+	ASSERTION: must be between 1950 and 2022 inclusive
+	ALGORITHM:
+		valid := (inYear >= 1950) AND (inYear <= 2022)
+		
+ 

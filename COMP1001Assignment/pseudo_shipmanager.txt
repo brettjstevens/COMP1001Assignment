@@ -1,0 +1,12 @@
+CLASS: ShipManager
+
+MAIN
+	TRY
+		CONSTRUCT userInterface USING UserInterface
+		userInterface.mainMenu <- none
+	
+	CATCH (Exception e)
+		OUTPUT "Error: " + e
+	FINALLY
+		OUTPUT "Bye."
+END MAIN

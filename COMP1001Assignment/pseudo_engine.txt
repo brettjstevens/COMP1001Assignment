@@ -1,0 +1,100 @@
+CLASS: EngineClass
+
+PUBLIC CLASS CONSTANTS: BAT := "BATTERY"
+						DIESEL := "DIESEL"
+						BIO := "BIO FUEL"
+
+CLASS FIELDS: cylinders (integer)
+				fuel (String)
+				
+CONSTRUCTORS:
+Default:
+	IMPORT: none
+	EXPORT: address of new Engine object 
+	ASSERTION: an engine with 18 cylinders that runs on a bio is a valid defualt state
+	ALGORITHM: 
+		cylinders := 18
+		fuel := BIO
+		
+Alternate #1:
+    IMPORT: inCylinders (integer), inFuel (String)
+    EXPORT: address of new Engine object 
+    ASSERTION: Creates the object if the imports are valid and FAILS otherwise
+    ALGORITHM:         
+                IF (validateCylinders <- inCylinders) AND (validateFuel <- inFuel) THEN
+                    cylinders := inCylinders
+                    fuel := inFuel
+                ELSE
+                    FAIL
+                END IF
+				
+Copy:
+	IMPORT: inEngine (EngineClass)
+    EXPORT: address of new EngineClass object /*You are not required to say/understand this export*/
+    ASSERTION: Creates an object with an identical object state as the import.
+    ALGORITHM:  cylinders := inEngine.getCylinders <- none
+                fuel := inEngine.getFuel <- none
+				
+Clone:
+    IMPORT: none
+    EXPORT: adress of new Engine object
+    ASSERTION: Creates an object with an identical object state as the import
+    ALGORITHM:  CONSTRUCT cloneEngineClass USING this.cylinders, this.fuel
+	
+MUTATORS:		
+SUBMODULE: setCylinders
+	IMPORT: inCylinders
+	EXPORT: none
+	ASSERTION: sets the cylinders to inCylinders
+	ALGORITHM:
+		cylinders := inCylinders
+		
+SUBMODULE: setFuel
+	IMPORT: inFuel
+	EXPORT: none
+	ASSERTION: sets the fuel to inFuel
+	ALGORITHM:
+		fuel := inFuel
+		
+ACCESSORS:
+SUBMUDULE: getCylinders
+	IMPORT: none
+	EXPORT: cylinders
+	
+SUBMUDULE: getFuel
+	IMPORT: none
+	EXPORT: fuel
+	
+SUBMODULE: toString
+	IMPORT: none
+	EXPORT: str
+	ASSERTION:
+	ALGORITHM: 
+		str := "The engine has "+ cylinders +" cylinders runs on "+ (convert to lower case)fuel +"."
+	
+SUBMODULES:
+SUBMODULE: equals
+	IMPORT: inObj (Object)
+	EXPORT: same (boolean)
+	ASSERTION: Two engines are interchangeable if they have the same cylinders and fuel
+	ALGORITHM:
+		same := FALSE
+        IF (inObj ISA EngineClass) THEN
+			inEngine:= (Convert to EngineClass)inObj
+			same := (cylinders EQUALS inEngine.getCylinders <- none) AND (fuel EQUALS inEngine.inFuel <- none)
+        ENDIF
+				
+SUBMODULE: validateCylinders
+	IMPORT: inCylinders (integer)
+	EXPORT: valid (boolean)
+	ASSERTION: must be between 2 and 20 inclusive
+	ALGORITHM:
+		valid := (inCylinders >= 2) AND (inCylinders <= 20)
+		
+SUBMODULE: validateFuel
+	IMPORT: inFuel(String)
+	EXPORT: valid (boolean)
+	ASSERTION: fuel must be BAT or DIESEL or BIO
+	ALGORITHM:
+		valid := (inFuel EQUALS BAT) OR (inFuel EQUALS DIESEL) OR (inFuel EQUALS BIO)
+		

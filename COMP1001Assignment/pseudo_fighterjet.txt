@@ -1,0 +1,115 @@
+CLASS: FighterJetClass
+
+PUBLIC CLASS CONSTANTS: BAT := "BATTERY"
+						DIESEL := "DIESEL"
+						BIO := "BIO FUEL"
+						TOL := 0.001
+
+CLASS FIELDS: ordnance (String)
+				wingSpan (real)
+				
+CONSTRUCTORS:
+Default:
+	IMPORT: none
+	EXPORT: address of new FighterJetClass object
+	ASSERTION: calls super defualt constructor,
+				ordnance of a flux rifle with a wingspan of 4.0m is a valid defualt state
+	ALGORITHM: 
+		super defualt constructor
+		ordnance := "flux rifle"
+		wingSpan := 4.0
+		
+Alternate #1:
+    IMPORT: inSerialNum (String), inYear (integer), inEngine (Engine), inOrdnance (String), inWingSpan (real)
+    EXPORT: address of new FighterJetClass object
+    ASSERTION: Creates the object if the imports are valid 
+				super <- inSerialNum, inYear, inEngine
+                    setOrdnance <- inOrdnance
+                    setWingSpan <- inWingSpan
+				
+Copy:
+	IMPORT: inFighterJet (FighterJetClass)
+    EXPORT: address of new FighterJetClass object
+    ASSERTION: Creates an object with an identical object state as the import.
+    ALGORITHM:  super <- inFighterJet
+                ordnance := inFighterJet.getOrdnance <- none
+                wingSpan := inFighterJet.getWingSpan <- none
+				
+Clone:
+    IMPORT: none
+    EXPORT: adress of new FighterJet object
+    ASSERTION: Creates an object with an identical object state as the import
+    ALGORITHM:  CONSTRUCT cloneFighterJetClass USING this
+	
+MUTATORS:	
+SUBMODULE: setOrdnance
+	IMPORT: inOrdnance
+	EXPORT: none
+	ASSERTION: sets the ordnance to inOrdnance and FAILS otherwise
+	ALGORITHM:
+		IF (validateOrdnance <- inOrdnance) THEN
+			ordnance := inOrdnance
+		ELSE
+			FAIL
+		END IF
+		
+SUBMODULE: setWingSpan
+	IMPORT: inWingSpan
+	EXPORT: none
+	ASSERTION: sets the wing span to inWingSpan and FAILS otherwise
+	ALGORITHM:
+		IF (validateWingSpan <- inWingSpan) THEN
+			wingSpan := inWingSpan
+		ELSE
+			FAIL
+		END IF
+		
+		
+ACCESSORS:	
+SUBMUDULE: getOrdnance
+	IMPORT: none
+	EXPORT: ordnance
+	
+SUBMUDULE: getWingSpan
+	IMPORT: none
+	EXPORT: wingSpan
+	
+SUBMODULE: toString
+	IMPORT: none
+	EXPORT: str
+	ASSERTION:
+	ALGORITHM: 
+		str := "The fighter jet "+ serialNum +" was comissioned in "+ year +", /* add engine bit */. It is a fighter jet with a "+ ordnance +" ordnance and has a wing span of "+ wingSpan +" metres."
+
+SUBMODULES:				
+SUBMODULE: equals
+	IMPORT: inObj (Object)
+	EXPORT: same (boolean)
+	ASSERTION: Two fighter jets are interchangeable if they have the same serial number, comission year, ordnance and wing span
+	ALGORITHM:
+		same := FALSE
+        IF (inObj ISA FighterJetClass) THEN
+			inFighterJet:= (Convert to FighterJetClass)inObj
+			same := (super.equals <- inFighterJet) AND (ordnance EQUALS inFighterJet.inOrdnance <- none) AND (wingSpan EQUALS inFighterJet.inWingSpan <- none)
+        ENDIF
+
+SUBMODULE: travelCalc
+	IMPORT: distance (integer)
+	EXPORT: time (real)
+	ASSERTION: can be called to calculate the travel time for fighter jets
+	ALGORITHM:
+		time = (convert to real)distance / (wingSpan * (convert to real)cylinders * 150.0);
+	
+SUBMODULE: validateOrdnance
+	IMPORT: inOrdnance(String)
+	EXPORT: valid (boolean)
+	ASSERTION: ordnance must be DUCK or RYNO or LAVA
+	ALGORITHM:
+		valid := (inOrdnance EQUALS DUCK) OR (inOrdnance EQUALS RYNO) OR (inOrdnance EQUALS LAVA)
+		
+SUBMODULE: validateWingSpan
+	IMPORT: inWingSpan (real)
+	EXPORT: valid (boolean)
+	ASSERTION: must be between 2.20 and 25.6 inclusive
+	ALGORITHM:
+		valid := (inWingSpan >= 2.20) AND (inWingSpan <= 25.6)

@@ -1,0 +1,114 @@
+CLASS: ShipStorage
+
+PUBLIC CLASS CONSTANTS: 
+
+CLASS FIELDS: shipArray(ARRAY of Ships of SIZE 30)
+				num(integer)
+
+CONSTRUCTORS:
+Default:
+	IMPORT: none
+	EXPORT:
+	ASSERTION: constructs two arrays and sets counting integers to zero
+	ALGORITHM:
+		CONSTRUCT shipArray
+		num:= 0
+		
+MUTATORS:
+SUBMODULE: addShip
+	IMPORT: inShip (Ship)
+	EXPORT: 
+	ASSERTION: checks that Ship object is not null and adds object to next position in the array, otherwise fails
+	ALGORITHM:
+		IF (inShip NOT null) AND (num < 15) THEN
+			shipArray[num] := inShip
+			num++
+		ESLE IF (num >= 15) THEN
+			FAIL
+		ELSE
+			FAIL
+		END IF
+			
+ACCESSORS: 
+SUBMODULE: getShipArray
+	IMPORT: none
+	EXPORT: shipArray
+	
+SUBMODULE: getNum
+	IMPORT: none
+	EXPORT: num 
+
+SUBMODULES:
+SUBMODULE: destinationCheck
+	IMPORT: distance (integer)
+	EXPORT:
+	ASSERTION:  imports an integer to loop through each element and then use the calcTravel method and return 
+				a string that contains the serial number and type of ship of the fastest ship
+	ALGORITHM:
+		(real) time = 1000000000000000
+		
+		FOR i := 0 TO num (exclusive) INC BY 1
+			cylinders = shipArray[i].getCylinders <- none
+			time = shipArray[i].travelCalc <- distance, cylinders
+			
+			CASE type
+			S:
+				fastestType = "submarine"
+			F:
+				fastestType = "fighter jet"
+			END CASE
+			
+		OUTPUT "The fastest ship is a " + fastestType + " with serial number of " + fastestSerial +". It covers a distance of " + distance + " metres in " + fastestTime +" seconds.\n"
+
+SUBMODULE: findDuplicates
+	IMPORT: num, numFj (integers)
+	EXPORT: 
+	ASSERTION: loop through the arrays and display the ship details of any duplicate ships using the toString method
+	ALGORITHM: 
+		IF(num < 2) 
+			OUTPUT "There is less than 2 ships stored."
+		ELSE
+			FOR i = 0 TO 15 (exclusive) INC BY 1
+				FOR j = i + 1 TO 15 (inclusive) INC BY 1
+					IF (shipArray[i].equals <- shipArray[j]) THEN 
+						OUTPUT "Duplicate Ship occuring at positions " + i +" and " + j + ". Details: " + shipArray[i].toString <- none + NEWLINE
+					END IF
+				END FOR
+			END FOR
+		END IF
+		OUTPUT "No more duplicates.\nEnding finding duplcates and exiting to main menu...\n"
+					
+SUBMODULE: viewShips
+	IMPORT: 
+	EXPORT: 
+	ASSERTION:  loop through both arrays and construct a string with the output detailing each ship
+	ALGORITHM: 
+		FOR i = 0 TO 15 (exclusive) INC BY 1
+			OUTPUT shipArray[i].toString <- none + NEWLINE
+		END FOR
+		
+SUBMODULE: equals
+	IMPORT: inObj (Object)
+	EXPORT: same (boolean)
+	ASSERTION: compare the content of the arrays of the two objects
+	ALGORITHM: 
+		same := FALSE
+		IF (inObj ISA ShipStorage) THEN
+			storeObj := (convert to ShipStorage)inObj
+			inShipArray[] := storeObj.getshipArray <- none
+			i := 0
+			DO
+				same := (shipArray[i] EQUALS inShipArray[i])
+				i++
+			WHILE (i < num) OR same
+			
+			inFjArray[] := storeObj.getFjArray <- none
+			j := 0
+			DO
+				same := (fjArray[j] EQUALS inFjArray[j])
+				j++
+			WHILE (j < numFj) OR same
+		ELSE
+			FAIL
+		END IF
+		

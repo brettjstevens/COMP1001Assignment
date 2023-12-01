@@ -1,0 +1,115 @@
+CLASS: SubmarineClass
+
+PUBLIC CLASS CONSTANTS: STEEL := "STEEL"
+						ALLOY := "ALLOY"
+						TIT := "TITANIUM"
+						TOL := 0.001
+
+CLASS FIELDS: hull (String)
+				maxDepth (real)
+				
+CONSTRUCTORS:
+Default:
+	IMPORT: none
+	EXPORT: address of new Submarine object
+	ASSERTION: submarine of serial number 100.001 made in 1998,
+				hull of steel that can reach a max depth of 450m is a valid defualt state
+	ALGORITHM: 
+		super <- serialNum, year, maxDepth
+		hull := STEEL
+		maxDepth := -450
+		
+Alternate #1:
+    IMPORT: inHull (String), inMaxDepth (real)
+    EXPORT: address of new Submarine object
+    ASSERTION: Creates the object if the imports are valid
+    ALGORITHM:
+            super <- inSerialNum, inYear, inEngine
+            setHull <- inHull
+            setMaxDepth <- inMaxDepth
+				
+Copy:
+	IMPORT: inSubmarine (SubmarineClass)
+    EXPORT: address of new SubmarineClass object 
+    ASSERTION: Creates an object with an identical object state as the import.
+    ALGORITHM:  super < - inSubmarine
+                hull := inSubmarine.getHull <- none
+                maxDepth := inSubmarine.getMaxDepth <- none
+				
+Clone:
+    IMPORT: none
+    EXPORT: adress of new Submarine object
+    ASSERTION: Creates an object with an identical object state as the import
+    ALGORITHM:  CONSTRUCT cloneSubmarineClass USING this
+	
+MUTATORS:	
+SUBMODULE: setHull
+	IMPORT: inHull
+	EXPORT: none
+	ASSERTION: sets the hull to inHull and FAILS otherwise
+	ALGORITHM:
+		IF (validateHull <- inHull) THEN
+			hull := inHull
+		ELSE
+			FAIL
+		END IF
+		
+SUBMODULE: setMaxDepth
+	IMPORT: inMaxDepth
+	EXPORT: none
+	ASSERTION: sets the max depth to inMaxDepth and FAILS otherwise
+	ALGORITHM:
+		IF (validateMaxDepth <- inMaxDepth) THEN
+			maxDepth := inMaxDepth
+		ELSE
+			FAIL
+		END IF
+		
+ACCESSORS:	
+SUBMUDULE: getHull
+	IMPORT: none
+	EXPORT: hull
+	
+SUBMUDULE: getMaxDepth
+	IMPORT: none
+	EXPORT: maxDepth
+	
+SUBMODULE: toString
+	IMPORT: none
+	EXPORT: str
+	ASSERTION:
+	ALGORITHM: 
+		str := super.toSting + "It is a submarine with a "+ hull +" hull and has a max depth of "+ maxDepth +" metres."	
+
+SUBMODULES:
+SUBMODULE: equals
+	IMPORT: inObj (Object)
+	EXPORT: same (boolean)
+	ASSERTION: Two submarines are interchangeable if they have the same serial number, comission year, hull material and max depth
+	ALGORITHM:
+		same := FALSE
+        IF (inObj ISA SubmarineClass) THEN
+			inSubmarine:= (Convert to SubmarineClass)inObj
+			same := (super.equals <- inSubmarine) AND (hull EQUALS inSubmarine.inHull <- none) AND (inSubmarine.inHull <- none > maxDepth - TOL) AND (inSubmarine.inHull <- none < maxDepth + TOL)
+        ENDIF
+	
+SUBMODULE: travelCalc
+	IMPORT: distance (integer)
+	EXPORT: time (real)
+	ASSERTION: can be called to calculate the travel time for submarine
+	ALGORITHM:
+		time = ((convert to real)distance / (convert to real)cylinders) * ( 1.0 / (10.0 + maxDepth * -1.0))
+	
+SUBMODULE: validateHull
+	IMPORT: inHull(String)
+	EXPORT: valid (boolean)
+	ASSERTION: hull must be STEEL or ALLOY or TITANIUM
+	ALGORITHM:
+		valid := (inHull EQUALS STEEL) OR (inHull EQUALS ALLOY) OR (inHull EQUALS TIT)
+		
+SUBMODULE: validateMaxDepth
+	IMPORT: inMaxDepth (real)
+	EXPORT: valid (boolean)
+	ASSERTION: must be between -500.0 and 0.0 inclusive
+	ALGORITHM:
+		valid := (inYear >= -500.0) AND (inYear <= 0)
